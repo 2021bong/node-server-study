@@ -124,8 +124,10 @@ app.post('/signup', (req, res) => {
 app.post('/posting', (req, res) => {
   const feed = req.body.newfeed;
   feeds.push(feed);
-  console.log(feeds);
   res.json({ message: 'posting success!' });
+});
+app.get('/posting_get', (req, res) => {
+  res.json({ data: feeds });
 });
 
 const server = http.createServer(app);
