@@ -142,8 +142,23 @@ app.patch('/posting_modify', (req, res) => {
 app.delete('/posting_delete', (req, res) => {
   const deleteContent = req.body.delete;
   feeds.splice(deleteContent.id - 1, 1);
-  console.log('최종피드', feeds);
   res.json({ message: 'postingDeleted' });
+});
+
+app.patch('/user_posting', (req, res) => {
+  const user = req.body.searchuser;
+  let arr = [];
+  feeds.forEach((feed) => {
+    if (user.userId === feed.userName) {
+      arr.push(feed);
+    }
+  });
+  res.json({
+    data: {
+      userName: user.userId,
+      posting: arr,
+    },
+  });
 });
 
 const server = http.createServer(app);
