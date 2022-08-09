@@ -1,4 +1,4 @@
-const users = [
+let users = [
   {
     profileImg: './img/default_profile.png',
     userId: 'justcode',
@@ -51,7 +51,7 @@ const users = [
   },
 ];
 
-const feeds = [
+let feeds = [
   {
     id: 1,
     userName: '2021bong',
@@ -116,18 +116,27 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
   res.json({ message: 'hi!' });
 });
+
 app.post('/signup', (req, res) => {
   const user = req.body.newuser;
   users.push(user);
   res.json({ message: 'signup success!' });
 });
+
 app.post('/posting', (req, res) => {
   const feed = req.body.newfeed;
   feeds.push(feed);
   res.json({ message: 'posting success!' });
 });
+
 app.get('/posting_get', (req, res) => {
   res.json({ data: feeds });
+});
+
+app.patch('/posting_modify', (req, res) => {
+  const content = req.body.newcontent;
+  feeds[content.id - 1] = content;
+  res.json({ data: feeds[content.id - 1] });
 });
 
 const server = http.createServer(app);
