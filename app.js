@@ -139,6 +139,13 @@ app.patch('/posting_modify', (req, res) => {
   res.json({ data: feeds[content.id - 1] });
 });
 
+app.delete('/posting_delete', (req, res) => {
+  const deleteContent = req.body.delete;
+  feeds.splice(deleteContent.id - 1, 1);
+  console.log('최종피드', feeds);
+  res.json({ message: 'postingDeleted' });
+});
+
 const server = http.createServer(app);
 
 server.listen(8000, (req, res) => {
