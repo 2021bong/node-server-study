@@ -117,45 +117,71 @@ app.get('/', (req, res) => {
   res.json({ message: 'hi!' });
 });
 
+// 과제 1
 app.post('/signup', (req, res) => {
-  const user = req.body.newuser;
-  users.push(user);
+  const { profileImg, userId, desc } = req.body.newuser;
+  users.push({
+    profileImg,
+    userId,
+    desc,
+  });
   res.json({ message: 'signup success!' });
 });
 
+// 과제 2
 app.post('/posting', (req, res) => {
-  const feed = req.body.newfeed;
-  feeds.push(feed);
+  const {
+    userName,
+    imageSrc,
+    imgAlt,
+    likeCount,
+    content,
+    allComment,
+    createdTime,
+  } = req.body.newfeed;
+  feeds.push({
+    userName,
+    imageSrc,
+    imgAlt,
+    likeCount,
+    content,
+    allComment,
+    createdTime,
+  });
   res.json({ message: 'posting success!' });
 });
 
+// 과제 3
 app.get('/posting_get', (req, res) => {
   res.json({ data: feeds });
 });
 
+// 과제 4
 app.patch('/posting_modify', (req, res) => {
-  const content = req.body.newcontent;
+  const content = req.body.newfeed;
   feeds[content.id - 1] = content;
   res.json({ data: feeds[content.id - 1] });
 });
 
+// 과제 5
 app.delete('/posting_delete', (req, res) => {
-  const deleteContent = req.body.delete;
-  feeds.splice(deleteContent.id - 1, 1);
+  const { id } = req.body.delete;
+  feeds.splice(id - 1, 1);
   res.json({ message: 'postingDeleted' });
 });
 
+// 과제 6
 app.patch('/user_posting', (req, res) => {
-  const user = req.body.searchuser;
+  const { userId } = req.body.searchuser;
   let arr = [];
   feeds.forEach((feed) => {
-    if (user.userId === feed.userName) {
+    if (userId === feed.userName) {
       arr.push(feed);
     }
   });
   res.json({
     data: {
-      userName: user.userId,
+      userName: userId,
       posting: arr,
     },
   });
