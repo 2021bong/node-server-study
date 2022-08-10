@@ -158,9 +158,16 @@ app.get('/posting_get', (req, res) => {
 
 // 과제 4
 app.patch('/posting_modify', (req, res) => {
-  const content = req.body.newfeed;
-  feeds[content.id - 1] = content;
-  res.json({ data: feeds[content.id - 1] });
+  const { id } = req.body.editfeed;
+  feeds = feeds.map((feed) => {
+    if (id === feed.id) {
+      return (feed = req.body.editfeed);
+    } else {
+      return feed;
+    }
+  });
+  console.log('after edit', feeds);
+  res.json({ data: feeds[id - 1] });
 });
 
 // 과제 5
