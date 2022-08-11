@@ -109,9 +109,11 @@ let feeds = [
 const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.json({ message: 'hi!' });
@@ -192,8 +194,12 @@ app.patch('/posting_modify', (req, res) => {
 // 과제 5
 app.delete('/posting_delete', (req, res) => {
   try {
-    const { id } = req.body.delete;
-    feeds.splice(id - 1, 1);
+    const { id } = req.query;
+    feeds.forEach((feed, i) => {
+      if (feed.id == id) {
+        feeds.splice(i, 1);
+      }
+    });
     return res.status(200).json({ message: 'postingDeleted' });
   } catch (err) {
     console.log(err);
@@ -202,9 +208,9 @@ app.delete('/posting_delete', (req, res) => {
 });
 
 // 과제 6
-app.get('/user_posting/:searchuserid', (req, res) => {
+app.get('/user_posting', (req, res) => {
+  const { searchuser } = req.query;
   try {
-    const searchuser = req.params.searchuserid;
     let arr = [];
     feeds.forEach((feed) => {
       if (searchuser === feed.userName) {
@@ -218,7 +224,6 @@ app.get('/user_posting/:searchuserid', (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
     return res.status(400).json({ message: err.message });
   }
 });
