@@ -202,18 +202,18 @@ app.delete('/posting_delete', (req, res) => {
 });
 
 // 과제 6
-app.patch('/user_posting', (req, res) => {
+app.get('/user_posting/:searchuserid', (req, res) => {
   try {
-    const { searchuserid } = req.body.searchuser;
+    const searchuser = req.params.searchuserid;
     let arr = [];
     feeds.forEach((feed) => {
-      if (searchuserid === feed.userName) {
+      if (searchuser === feed.userName) {
         arr.push(feed);
       }
     });
     res.status(200).json({
       data: {
-        userName: searchuserid,
+        userName: searchuser,
         posting: arr,
       },
     });
