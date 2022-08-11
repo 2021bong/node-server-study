@@ -125,7 +125,7 @@ app.post('/signup', (req, res) => {
     userId,
     desc,
   });
-  res.json({ message: 'signup success!' });
+  res.status(200).json({ message: 'signup success!' });
 });
 
 // 과제 2
@@ -148,12 +148,12 @@ app.post('/posting', (req, res) => {
     allComment,
     createdTime,
   });
-  res.json({ message: 'posting success!' });
+  res.status(200).json({ message: 'posting success!' });
 });
 
 // 과제 3
 app.get('/posting_get', (req, res) => {
-  res.json({ data: feeds });
+  res.status(200).json({ data: feeds });
 });
 
 // 과제 4
@@ -167,14 +167,14 @@ app.patch('/posting_modify', (req, res) => {
     }
   });
   console.log('after edit', feeds);
-  res.json({ data: feeds[id - 1] });
+  res.status(200).json({ data: feeds[id - 1] });
 });
 
 // 과제 5
 app.delete('/posting_delete', (req, res) => {
   const { id } = req.body.delete;
   feeds.splice(id - 1, 1);
-  res.json({ message: 'postingDeleted' });
+  res.status(200).json({ message: 'postingDeleted' });
 });
 
 // 과제 6
@@ -186,7 +186,7 @@ app.patch('/user_posting', (req, res) => {
       arr.push(feed);
     }
   });
-  res.json({
+  res.status(200).json({
     data: {
       userName: userId,
       posting: arr,
