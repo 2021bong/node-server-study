@@ -98,7 +98,7 @@ let feeds = [
     userName: 'devil_23',
     imageSrc:
       'https://images.unsplash.com/photo-1488554378835-f7acf46e6c98?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1771&q=80',
-    imgAlt: '썬글라스를 쓴 고양이',
+    imgAlt: '여러 색깔 빛의 잔상',
     likeCount: 0,
     content: '흙염룡이 날뛴다 . . .',
     allComment: 0,
@@ -119,83 +119,120 @@ app.get('/', (req, res) => {
 
 // 과제 1
 app.post('/signup', (req, res) => {
-  const { profileImg, userId, desc } = req.body.newuser;
-  users.push({
-    profileImg,
-    userId,
-    desc,
-  });
-  res.status(200).json({ message: 'signup success!' });
+  try {
+    const { profileImg, userId, desc } = req.body.newuser;
+    users.push({
+      profileImg,
+      userId,
+      desc,
+    });
+    return res.status(200).json({ message: 'signup success!' });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ message: err.message });
+  }
 });
 
 // 과제 2
 app.post('/posting', (req, res) => {
-  const {
-    userName,
-    imageSrc,
-    imgAlt,
-    likeCount,
-    content,
-    allComment,
-    createdTime,
-  } = req.body.newfeed;
-  feeds.push({
-    userName,
-    imageSrc,
-    imgAlt,
-    likeCount,
-    content,
-    allComment,
-    createdTime,
-  });
-  res.status(200).json({ message: 'posting success!' });
+  try {
+    const {
+      userName,
+      imageSrc,
+      imgAlt,
+      likeCount,
+      content,
+      allComment,
+      createdTime,
+    } = req.body.newfeed;
+    feeds.push({
+      userName,
+      imageSrc,
+      imgAlt,
+      likeCount,
+      content,
+      allComment,
+      createdTime,
+    });
+    return res.status(200).json({ message: 'posting success!' });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ message: err.message });
+  }
 });
 
 // 과제 3
 app.get('/posting_get', (req, res) => {
-  res.status(200).json({ data: feeds });
+  try {
+    res.status(200).json({ data: feeds });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
 });
 
 // 과제 4
 app.patch('/posting_modify', (req, res) => {
-  const { id } = req.body.editfeed;
-  feeds = feeds.map((feed) => {
-    if (id === feed.id) {
-      return (feed = req.body.editfeed);
-    } else {
-      return feed;
-    }
-  });
-  console.log('after edit', feeds);
-  res.status(200).json({ data: feeds[id - 1] });
+  try {
+    const { id } = req.body.editfeed;
+    feeds = feeds.map((feed) => {
+      if (id === feed.id) {
+        return (feed = req.body.editfeed);
+      } else {
+        return feed;
+      }
+    });
+    console.log('after edit', feeds);
+    return res.status(200).json({ data: feeds[id - 1] });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ message: err.message });
+  }
 });
 
 // 과제 5
 app.delete('/posting_delete', (req, res) => {
-  const { id } = req.body.delete;
-  feeds.splice(id - 1, 1);
-  res.status(200).json({ message: 'postingDeleted' });
+  try {
+    const { id } = req.body.delete;
+    feeds.splice(id - 1, 1);
+    return res.status(200).json({ message: 'postingDeleted' });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: err.message });
+  }
 });
 
 // 과제 6
 app.patch('/user_posting', (req, res) => {
-  const { userId } = req.body.searchuser;
-  let arr = [];
-  feeds.forEach((feed) => {
-    if (userId === feed.userName) {
-      arr.push(feed);
-    }
-  });
-  res.status(200).json({
-    data: {
-      userName: userId,
-      posting: arr,
-    },
-  });
+  try {
+    const { searchuserid } = req.body.searchuser;
+    let arr = [];
+    feeds.forEach((feed) => {
+      if (searchuserid === feed.userName) {
+        arr.push(feed);
+      }
+    });
+    res.status(200).json({
+      data: {
+        userName: searchuserid,
+        posting: arr,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ message: err.message });
+  }
 });
 
 const server = http.createServer(app);
 
-server.listen(8000, (req, res) => {
-  console.log({ message: 'Listening to requests on port 8000' });
-});
+const start = () => {
+  try {
+    server.listen(8000, (req, res) => {
+      console.log({ message: 'Listening to requests on port 8000' });
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+start();
