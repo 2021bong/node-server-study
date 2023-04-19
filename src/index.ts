@@ -1,5 +1,11 @@
 import { AppDataSource } from './data-source';
 import { User } from './entity/User';
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+
+const app = express();
+
+app.use(cors());
 
 AppDataSource.initialize()
   .then(async () => {
@@ -20,3 +26,12 @@ AppDataSource.initialize()
     );
   })
   .catch((error) => console.log(error));
+
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
+
+app.get('/ping', (req: Request, res: Response) => {
+  res.send('pong');
+});
