@@ -26,6 +26,9 @@ export class User {
   symptom: string;
 
   @Column()
+  reservation_date: string;
+
+  @Column()
   reservation_time: string;
 
   @CreateDateColumn()
