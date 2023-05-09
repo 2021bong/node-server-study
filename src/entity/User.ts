@@ -3,7 +3,10 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { AppointmentType } from './AppointmentType';
 
 @Entity()
 export class User {
@@ -14,16 +17,14 @@ export class User {
   name: string;
 
   @Column()
-  age: number;
-
-  @Column()
-  sex: string;
+  birth_day: string;
 
   @Column()
   phone_number: string;
 
-  @Column()
-  symptom: string;
+  @ManyToOne(() => AppointmentType)
+  @JoinColumn()
+  type: AppointmentType['id'];
 
   @Column()
   reservation_date: string;
@@ -31,9 +32,17 @@ export class User {
   @Column()
   reservation_time: string;
 
+  @Column({
+    nullable: true,
+  })
+  memo?: string;
+
   @CreateDateColumn()
   created_at: Date;
 
   @CreateDateColumn()
   updated_at: Date;
+
+  @Column()
+  reservationId: string;
 }
