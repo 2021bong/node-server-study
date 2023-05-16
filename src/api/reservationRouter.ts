@@ -3,16 +3,52 @@ import { User } from '../entity/User';
 import { AppDataSource } from '../data-source';
 import getReservationId from '../utils/getReservationId';
 import getStringType from '../utils/getStringType';
+import { FindOptionsSelect } from 'typeorm';
 
 const router = Router();
+
+const showColumn = [
+  'name',
+  'birth_day',
+  'phone_number',
+  'reservation_date',
+  'reservation_time',
+  'memo',
+  'reservation_id',
+] as FindOptionsSelect<User>;
 
 router.get('/', async (req: Request, res: Response) => {
   try {
     const userRepository = AppDataSource.getRepository(User);
-    const userData = await userRepository.find();
-    res.status(200).send(userData);
+
+    if (Number(req.query.type) === 1) {
+      const name = req.query.name as string;
+      const phone = req.query.phone as string;
+      const phone_number = `010-${phone.slice(3, 7)}-${phone.slice(7)}`;
+      const userDatas = await userRepository.find({
+        where: { name, phone_number },
+        select: showColumn,
+      });
+
+      if (userDatas.length) {
+        res.status(200).send(userDatas);
+      } else {
+        res.status(204).send([]);
+      }
+    } else {
+      const reservation_id = req.query.reservation_id as string;
+      const userDatas = await userRepository.find({
+        where: { reservation_id },
+        select: showColumn,
+      });
+
+      if (userDatas.length) {
+        res.status(200).send(userDatas);
+      } else {
+        res.status(204).send([]);
+      }
+    }
     console.log('GET /reservations : status 200');
-    console.log('userData.length : ', userData.length);
   } catch (err) {
     res.status(500).send({ message: err });
     console.log('GET /reservations : status 500');
@@ -67,25 +103,26 @@ router.post('/', async (req: PostUserRequest, res: PostUserResponse) => {
     switch (type) {
       case '건강검진':
         user.type = 2;
+        break;
       case '정밀검사':
         user.type = 3;
+        break;
       case '기타':
         user.type = 4;
+        break;
       case '일반진료':
       default:
         user.type = 1;
     }
     user.reservation_date = reservationDate;
     user.reservation_time = reservationTime;
-    user.reservationId = getReservationId(user);
+    user.reservation_id = getReservationId(user);
     user.memo = memo || null;
     user.created_at = new Date();
-
     const newUser = await AppDataSource.getRepository(User).save(user);
-
     const PostUserResponse = {
       name: newUser.name,
-      reservationId: newUser.reservationId,
+      reservationId: newUser.reservation_id,
       phoneNumber: newUser.phone_number,
       reservationType: getStringType(newUser.type),
     };

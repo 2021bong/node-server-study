@@ -44,5 +44,5 @@ export class User {
   updated_at: Date;
 
   @Column()
-  reservationId: string;
+  reservation_id: string;
 }
