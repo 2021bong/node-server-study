@@ -5,18 +5,10 @@ const getReservationId = ({
   birth_day,
 }) => {
   const [year, month, day] = reservation_date.split('-');
-  const [, , last] = phone_number.split('-');
-  const [hour, min] = reservation_time.split(':');
+  const last = phone_number.slice(7);
+  const time = reservation_time.replace(':', '').slice(0, 4);
   return (
-    year[2] +
-    year[3] +
-    month +
-    day +
-    last +
-    hour +
-    min +
-    birth_day[3] +
-    birth_day[7]
+    year[2] + year[3] + month + day + last + time + birth_day[3] + birth_day[7]
   );
 };
 

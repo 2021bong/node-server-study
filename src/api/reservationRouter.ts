@@ -28,12 +28,11 @@ router.get('/', async (req: Request, res: Response) => {
 
     if (Number(req.query.type) === 1) {
       const name = req.query.name as string;
-      const phone = req.query.phone as string;
-      if (!name || !phone) {
+      const phone_number = req.query.phone as string;
+      if (!name || !phone_number) {
         res.status(400).send({ message: 'There is no required values.' });
         return;
       }
-      const phone_number = `010-${phone.slice(3, 7)}-${phone.slice(7)}`;
       const userDatas = await userRepository.find({
         where: { name, phone_number },
         select: showColumn,
@@ -112,7 +111,7 @@ router.post('/', async (req: PostUserRequest, res: PostUserResponse) => {
     const user = new User();
     user.name = name;
     user.birth_day = birthDay;
-    user.phone_number = phoneNumber;
+    user.phone_number = phoneNumber.replaceAll('-', '');
     switch (type) {
       case '건강검진':
         user.type = 2;
