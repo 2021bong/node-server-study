@@ -1,17 +1,13 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
-import { AppointmentType } from './AppointmentType';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Reservation } from './Reservation';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.user)
+  record: Reservation;
 
   @Column()
   name: string;
@@ -22,27 +18,6 @@ export class User {
   @Column()
   phone_number: string;
 
-  @ManyToOne(() => AppointmentType)
-  @JoinColumn()
-  type: AppointmentType['id'];
-
   @Column()
-  reservation_date: string;
-
-  @Column()
-  reservation_time: string;
-
-  @Column({
-    nullable: true,
-  })
-  memo?: string;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @CreateDateColumn()
-  updated_at: Date;
-
-  @Column()
-  reservation_id: string;
+  block: boolean;
 }

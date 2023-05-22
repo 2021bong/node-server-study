@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { User } from './User';
+import { Reservation } from './Reservation';
 
 type AppointmentTypeTuple = '일반진료' | '정기검진' | '정밀검사' | '기타';
 
@@ -11,6 +11,6 @@ export class AppointmentType {
   @Column()
   type: AppointmentTypeTuple;
 
-  @OneToMany(() => User, (user) => user.type)
-  user: User;
+  @OneToMany(() => Reservation, (reservation) => reservation.type)
+  record: Reservation;
 }
