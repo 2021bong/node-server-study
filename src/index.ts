@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import router from './api';
 import bodyParser from 'body-parser';
+import { AppointmentType } from './entity/AppointmentType';
 
 const app = express();
 
@@ -12,6 +13,18 @@ app.use(router);
 
 AppDataSource.initialize()
   .then(async () => {
+    const appointmentDB = AppDataSource.getRepository(AppointmentType);
+    const crucialType = await appointmentDB.find();
+    if (crucialType.length === 4) {
+      const typeArr = ['일반진료', '정기검진', '정밀검사', '기타'];
+      typeArr.forEach((type) => {
+        const dataObj = new AppointmentType();
+        dataObj.type = type;
+        appointmentDB.save(dataObj);
+      });
+    }
+
+    console.log('AppointmentType data organized complete!');
     console.log('Success Connect DB!');
   })
   .catch((error) => console.log(error));
