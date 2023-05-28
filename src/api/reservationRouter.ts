@@ -6,8 +6,17 @@ import { User } from '../entity/User';
 
 import getReservationId from '../utils/getReservationId';
 import getStringType from '../utils/getStringType';
+import getNumberType from '../utils/getNumberType';
 
 const router = Router();
+
+/**
+ * TODO exception situation error handling
+ * GET /?type=1&name={name}&phone={phone_number}
+ * GET /?type=2&reservation_id={reservation_id}
+ * 1. 쿼리스트링 없이 요청을 보냈을 때
+ * 2. 쿼리스트링 type에 따른 필요한 키 값이 없을 때
+ */
 
 router.get('/', async (req: Request, res: Response) => {
   try {
@@ -109,6 +118,16 @@ interface PostReservationResponse extends Response {
   reservationId: string;
 }
 
+/**
+ * TODO exception situation error handling
+ * POST /
+ * body : { name, birthDay, phoneNumber, type, reservationDate, reservationTime, memo}
+ * 1. name, birthDay, phoneNumber, type, reservationDate, reservationTime이 없을 때
+ * 2. 보낸 데이터가 형식에 맞지 않을 때 (birthDay, phoneNumber, type)
+ * 3. 블랙리스트 유저가 예약을 시도했을 때
+ * 4. 이미 예약된 시간에 예약 시도했을 때
+ */
+
 router.post(
   '/',
   async (req: PostReservationRequest, res: PostReservationResponse) => {
@@ -150,23 +169,11 @@ router.post(
 
     try {
       const newReservation = new Reservation();
+      // 예약 내역이 있는 유저
       if (userData.length) {
         const userId = userData[0];
         newReservation.user = userId;
-        switch (type) {
-          case '건강검진':
-            newReservation.type = 2;
-            break;
-          case '정밀검사':
-            newReservation.type = 3;
-            break;
-          case '기타':
-            newReservation.type = 4;
-            break;
-          case '일반진료':
-          default:
-            newReservation.type = 1;
-        }
+        newReservation.type = getNumberType(type);
         newReservation.reservation_date = reservationDate;
         newReservation.reservation_time = reservationTime;
         newReservation.reservation_id = getReservationId(
@@ -188,6 +195,7 @@ router.post(
         };
         res.status(200).send(postReservationResponse);
       } else {
+        // 예약 내역이 없는 유저
         const newUser = new User();
         newUser.name = name;
         newUser.birth_day = birthDay;
@@ -198,20 +206,7 @@ router.post(
         );
         const userId = savedNewUser;
         newReservation.user = userId;
-        switch (type) {
-          case '건강검진':
-            newReservation.type = 2;
-            break;
-          case '정밀검사':
-            newReservation.type = 3;
-            break;
-          case '기타':
-            newReservation.type = 4;
-            break;
-          case '일반진료':
-          default:
-            newReservation.type = 1;
-        }
+        newReservation.type = getNumberType(type);
         newReservation.reservation_date = reservationDate;
         newReservation.reservation_time = reservationTime;
         newReservation.reservation_id = getReservationId(
