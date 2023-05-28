@@ -15,7 +15,7 @@ AppDataSource.initialize()
   .then(async () => {
     const appointmentDB = AppDataSource.getRepository(AppointmentType);
     const crucialType = await appointmentDB.find();
-    if (crucialType.length === 4) {
+    if (crucialType.length !== 4) {
       const typeArr = ['일반진료', '건강검진', '서류발급', '기타'];
       typeArr.forEach((type) => {
         const dataObj = new AppointmentType();
