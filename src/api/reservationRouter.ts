@@ -10,15 +10,64 @@ import getNumberType from '../utils/getNumberType';
 
 const router = Router();
 
+router.get('/check', async (req: Request, res: Response) => {
+  try {
+    const date = req.query.date as string;
+
+    if (!req.query.date) {
+      res.status(400).send({ message: 'There is no required values.' });
+      return;
+    }
+    const [year, month, day] = date.split('-');
+    if (
+      !year ||
+      !month ||
+      !day ||
+      year.length !== 4 ||
+      month.length !== 2 ||
+      day.length !== 2
+    ) {
+      res
+        .status(400)
+        .send({ message: 'This is not a valid format. (not YYYY-MM-DD)' });
+      return;
+    }
+    if (
+      Number(year) < new Date().getFullYear() ||
+      Number(month) > 12 ||
+      Number(day) > 31
+    ) {
+      res.status(400).send({ message: 'This is not a valid date.' });
+      return;
+    }
+
+    const reservedTimeData = await AppDataSource.getRepository(
+      Reservation
+    ).find({
+      select: ['reservation_time'],
+      where: {
+        reservation_date: date,
+      },
+    });
+    const onlyTimeData = reservedTimeData.map((time) => time.reservation_time);
+    res.status(200).send({ reservedTime: onlyTimeData });
+    console.log('GET /reservations/check : status 200');
+  } catch (err) {
+    res.status(500).send({ message: err });
+    console.log('GET /reservations/check : status 500');
+    console.log(err);
+  }
+});
+
 /**
  * TODO exception situation error handling
- * GET /?type=1&name={name}&phone={phone_number}
- * GET /?type=2&reservation_id={reservation_id}
+ * GET /writing?type=1&name={name}&phone={phone_number}
+ * GET /writing?type=2&reservation_id={reservation_id}
  * 1. 쿼리스트링 없이 요청을 보냈을 때
  * 2. 쿼리스트링 type에 따른 필요한 키 값이 없을 때
  */
 
-router.get('/', async (req: Request, res: Response) => {
+router.get('/writing', async (req: Request, res: Response) => {
   try {
     const userRepository = AppDataSource.getRepository(User);
     const reservationRepository = AppDataSource.getRepository(Reservation);
@@ -93,10 +142,10 @@ router.get('/', async (req: Request, res: Response) => {
         res.status(204).send([]);
       }
     }
-    console.log('GET /reservations : status 200');
+    console.log('GET /reservations/writing : status 200');
   } catch (err) {
     res.status(500).send({ message: err });
-    console.log('GET /reservations : status 500');
+    console.log('GET /reservations/writing : status 500');
     console.log(err);
   }
 });
